@@ -19,7 +19,7 @@ typing-extensions = ">=4.12"
 
 [package.extras]
 tz = ["tzdata"]
-
+ 
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
