@@ -1,8 +1,8 @@
-"""Initial tables
+"""auto_20250424_144243
 
-Revision ID: de5519ff4f07
+Revision ID: 0b4dba67a5d6
 Revises: 
-Create Date: 2025-04-22 15:49:43.678084
+Create Date: 2025-04-24 14:42:43.897459
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "de5519ff4f07"
+revision: str = "0b4dba67a5d6"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,6 +27,7 @@ def upgrade() -> None:
             "id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False
         ),
         sa.Column("name", sa.String(length=50), nullable=False),
+        sa.Column("permissions", sa.ARRAY(sa.String(length=50)), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("name"),
     )
@@ -36,7 +37,10 @@ def upgrade() -> None:
             "id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False
         ),
         sa.Column("email", sa.String(length=255), nullable=False),
-        sa.Column("password_hash", sa.String(length=255), nullable=False),
+        sa.Column("user_name", sa.String(length=255), nullable=False),
+        sa.Column("first_name", sa.String(length=255), nullable=False),
+        sa.Column("last_name", sa.String(length=255), nullable=False),
+        sa.Column("password", sa.String(length=255), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False),
         sa.Column(
             "created_at",
@@ -52,6 +56,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
+        sa.UniqueConstraint("user_name"),
     )
     op.create_table(
         "user_roles",
