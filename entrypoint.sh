@@ -10,5 +10,5 @@ echo "Applying new migrations if any..."
 poetry run alembic upgrade head
 
 echo "Starting application server..."
-poetry run uvicorn src.auth.main:app --host ${app_host} --port ${app_port} --reload
+poetry run uvicorn src.auth.main.main:app --host ${app_host} --port ${app_port} --reload
 

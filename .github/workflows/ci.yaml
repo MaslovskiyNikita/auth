@@ -25,7 +25,7 @@ jobs:
       - name: Run black
         uses: psf/black@stable
         with:
-          options: "--check --exclude alembic/versions/"
+          options: "--check --exclude src/auth/ifrastructure/alembic/versions/"
 
       - name: Run mypy
         uses: sasanquaneuf/mypy-github-action@releases/v1

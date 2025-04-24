@@ -3,11 +3,11 @@ import sys
 from logging.config import fileConfig
 from pathlib import Path
 
+from alembic import context  # ignore [attr-defined]
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
-from alembic import context  # ignore [attr-defined]
-from src.auth.database.models import Base
+from src.auth.infrastructure.models import Base
 
 load_dotenv()
 # this is the Alembic Config object, which provides
