@@ -1,26 +1,25 @@
-# mypy: ignore-errors
-
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List
-from uuid import UUID
 
 from user_role import Role
+from value_objects.user_email import Email
+from value_objects.user_id import UserId
 
 
 @dataclass
 class User:
 
-    id: UUID
-    email: str
+    id: UserId
+    email: Email
     username: str
     first_name: str
     last_name: str
     password: str
-    is_active: bool = True
     created_at: datetime
     updated_at: datetime
     roles: List[Role]
+    is_active: bool = True
 
     def __str__(self):
 

@@ -1,11 +1,12 @@
-from datetime import datetime
 from uuid import UUID
 
-from base import Base
-from sqlalchemy import ARRAY, Boolean, DateTime, ForeignKey, String, func
+from sqlalchemy import ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from user import UserDB
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.auth.infrastructure.db.models.base import Base
+from src.auth.infrastructure.db.models.permissions import PermissionsDB
+from src.auth.infrastructure.db.models.user import UserDB
 
 
 class UserRoleAssociation(Base):
@@ -23,7 +24,6 @@ class UserRoleAssociation(Base):
     )
 
     user: Mapped["UserDB"] = relationship(back_populates="role_associations")
-    role: Mapped["RoleDB"] = relationship(back_populates="user_associations")
 
 
 class RoleDB(Base):
@@ -32,16 +32,10 @@ class RoleDB(Base):
     id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid()
     )
-    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-    permissions: Mapped[list[str]] = mapped_column(ARRAY(String(50)))
-
-    user_associations: Mapped[list["UserRoleAssociation"]] = relationship(
-        back_populates="role", cascade="all, delete-orphan", passive_deletes=True
+    name: Mapped[str] = mapped_column(unique=True, nullable=False)
+    permissions: Mapped[list["PermissionsDB"]] = ForeignKey(
+        "permissions", ondelete="CASCADE"
     )
-
-    @property
-    def users(self) -> list["UserDB"]:
-        return [assoc.user for assoc in self.user_associations]
 
     def __repr__(self):
         return f"<RoleDB(id={self.id}, name={self.name})>"
