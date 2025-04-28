@@ -6,7 +6,6 @@ from value_objects.permissions import PermissionPool
 
 
 @dataclass
-class Permissions:
+class Permission:
     id: UUID
     name: str
-    description: str
