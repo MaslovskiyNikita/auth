@@ -2,10 +2,10 @@ from dataclasses import dataclass
 from typing import List
 from uuid import UUID
 
-from value_objects.permissions import PermissionPool
+from src.auth.domain.value_objects.permissions import PermissionPool
 
 
 @dataclass
-class Permission:
+class Permissions:
     id: UUID
     name: str
