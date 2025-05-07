@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.auth.infrastructure.db.database import container
+from src.auth.main.dependencies.container import container
 from src.auth.presentation.api.rest.v1.exeption_handler.user_exists_error import (
     init_exeptions_handlers,
 )

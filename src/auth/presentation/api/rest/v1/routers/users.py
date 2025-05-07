@@ -7,11 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.application.repositories.user_repository import UserRepositoryABC
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
 from src.auth.domain.entity.user import User
-from src.auth.infrastructure.db.database import Container
 from src.auth.infrastructure.db.uow.uow import UnitOfWork
-from src.auth.infrastructure.repositories.user_repository_impl import (
-    CreateUserRepository,
-)
+from src.auth.infrastructure.repositories.user_repository_impl import UserRepository
+from src.auth.main.dependencies.container import Container
 from src.auth.presentation.api.rest.v1.schemas.user import (
     UserCreateSchema,
     UserResponseSchema,

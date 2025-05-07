@@ -1,11 +1,12 @@
+# mypy: disable-error-code="attr-defined,no-untyped-call"
 import datetime
 import uuid
 
 from src.auth.application.exeptions.exeptions import UserAlreadyExistsError
+from src.auth.application.repositories.hashing.hashing import PasswordHasherABC
+from src.auth.application.repositories.uow.uow import UnitOfWorkABC
 from src.auth.application.repositories.user_repository import UserRepositoryABC
 from src.auth.domain.entity.user import User
-from src.auth.infrastructure.db.uow.uow import UnitOfWork
-from src.auth.main.hashing.hashing import hashed_password
 from src.auth.presentation.api.rest.v1.schemas.user import (
     UserCreateSchema,
     UserResponseSchema,
@@ -13,20 +14,18 @@ from src.auth.presentation.api.rest.v1.schemas.user import (
 
 
 class CreateUserUseCase:
-    def __init__(self, uow: UnitOfWork):
+    def __init__(self, uow: UnitOfWorkABC, hashing: PasswordHasherABC):
         self._uow = uow
+        self._hashing = hashing
 
     async def __call__(self, user_data: UserCreateSchema) -> UserResponseSchema:
         async with self._uow:
-            existing_user = await self._uow.user_repository.check_user_exists(
-                user_data.email
-            )
+            existing_user = await self._uow.user_repository.exists(user_data.email)  # type: ignore[*]
 
             if existing_user:
-                await self._uow.rollback()  # type: ignore[no-untyped-call]
                 raise UserAlreadyExistsError(user_data.email)
 
-            password_hash = hashed_password(str(user_data.password))
+            password_hash = self._hashing.hash(str(user_data.password))
 
             new_user = User(
                 id=str(uuid.uuid4()),  # type: ignore[arg-type]
@@ -41,7 +40,7 @@ class CreateUserUseCase:
                 is_active=True,
             )
 
-            saved_user = await self._uow.user_repository.save(new_user)
+            saved_user = await self._uow.user_repository.save(new_user)  # type: ignore[misc]
             await self._uow.commit()  # type: ignore[no-untyped-call]
 
             return UserResponseSchema(

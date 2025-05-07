@@ -3,9 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
 from src.auth.infrastructure.db.uow.uow import UnitOfWork
-from src.auth.infrastructure.repositories.user_repository_impl import (
-    CreateUserRepository,
-)
+from src.auth.infrastructure.hashing.hashing import PasswordHasher
+from src.auth.infrastructure.repositories.user_repository_impl import UserRepository
 from src.auth.main.settings.settings import settings
 
 
@@ -24,7 +23,7 @@ class Container(containers.DeclarativeContainer):
     )
 
     user_repository = providers.Factory(
-        CreateUserRepository,
+        UserRepository,
         session_factory=session_factory,
     )
 
@@ -33,7 +32,11 @@ class Container(containers.DeclarativeContainer):
         session_factory=session_factory,
     )
 
-    user_use_case = providers.Factory(CreateUserUseCase, uow=uow)
+    password_hasher = providers.Factory(PasswordHasher)
+
+    user_use_case = providers.Factory(
+        CreateUserUseCase, uow=uow, hashing=password_hasher
+    )
 
 
 container = Container()
