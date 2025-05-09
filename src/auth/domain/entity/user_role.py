@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 from uuid import UUID
 
-from permission import Permissions
+from src.auth.domain.entity.permission import Permissions
 
 
 @dataclass

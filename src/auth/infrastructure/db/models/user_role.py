@@ -2,11 +2,10 @@ from uuid import UUID
 
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.auth.infrastructure.db.models.base import Base
 from src.auth.infrastructure.db.models.permissions import PermissionsDB
-from src.auth.infrastructure.db.models.user import UserDB
 
 
 class UserRoleAssociation(Base):
@@ -22,8 +21,6 @@ class UserRoleAssociation(Base):
         ForeignKey("roles.id", ondelete="CASCADE"),
         primary_key=True,
     )
-
-    user: Mapped["UserDB"] = relationship(back_populates="role_associations")
 
 
 class RoleDB(Base):

@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 
-from user_role import Role
-from value_objects.user_email import Email
-from value_objects.user_id import UserId
+from src.auth.domain.entity.user_role import Role
+from src.auth.domain.value_objects.user_email import Email
+from src.auth.domain.value_objects.user_id import UserId
 
 
 @dataclass
