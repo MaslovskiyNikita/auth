@@ -27,9 +27,6 @@ class SESEmailService(EmailRepositoryABC):
         self.source_email = source_email
 
     async def send_confirmation_email(self, to_email: str, token: str) -> None:
-        print("========================================")
-        print(token)
-        print("========================================")
         confirmation_url = f"{settings.backend_url}/confirm-email?token={token}"
 
         async with self.session.client(
