@@ -2,9 +2,14 @@ from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
+from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
+from src.auth.infrastructure.aws.ses_manager import SESEmailService
 from src.auth.infrastructure.db.uow.uow import UnitOfWork
-from src.auth.infrastructure.hashing.hashing import PasswordHasher
-from src.auth.infrastructure.repositories.user_repository_impl import UserRepository
+from src.auth.infrastructure.hashing.hashing import HashlibPasswordHasher
+from src.auth.infrastructure.repositories.token_use_case import ItsDangerousTokenService
+from src.auth.infrastructure.repositories.user_repository_impl import (
+    SQLAlchemyUserRepository,
+)
 from src.auth.main.settings.settings import settings
 
 
@@ -23,7 +28,7 @@ class Container(containers.DeclarativeContainer):
     )
 
     user_repository = providers.Factory(
-        UserRepository,
+        SQLAlchemyUserRepository,
         session_factory=session_factory,
     )
 
@@ -32,10 +37,34 @@ class Container(containers.DeclarativeContainer):
         session_factory=session_factory,
     )
 
-    password_hasher = providers.Factory(PasswordHasher)
+    password_hasher = providers.Factory(HashlibPasswordHasher)
+
+    email_service = providers.Factory(
+        SESEmailService,
+        aws_access_key=settings.aws_ses_access_key_id,
+        aws_secret_key=settings.aws_ses_secret_access_key,
+        region=settings.region,
+        endpoint_url=settings.aws_ses_endpoint_url,
+        source_email=settings.email_host_user,
+    )
+
+    token_service = providers.Factory(
+        ItsDangerousTokenService,
+        secret_key=settings.token_secret_key,
+        salt=settings.salt,
+        max_age=3600,
+    )
 
     user_use_case = providers.Factory(
-        CreateUserUseCase, uow=uow, hashing=password_hasher
+        CreateUserUseCase,
+        uow=uow,
+        hashing=password_hasher,
+        email_service=email_service,
+        token_service=token_service,
+    )
+
+    validate_token_use_case = providers.Factory(
+        ValidateTokenUseCase, token_service=token_service, uow=uow
     )
 
 

@@ -6,7 +6,7 @@ from src.auth.domain.entity.user import User
 from src.auth.infrastructure.db.models.user import UserDB
 
 
-class UserRepository(UserRepositoryABC):
+class SQLAlchemyUserRepository(UserRepositoryABC):
 
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -21,3 +21,8 @@ class UserRepository(UserRepositoryABC):
         self.session.add(orm_user)
         await self.session.flush()
         return orm_user
+
+    async def get_by_email(self, email: str) -> UserDB | None:
+        query = select(UserDB).where(UserDB.email == email)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()

@@ -4,7 +4,7 @@ from src.auth.application.repositories.hashing.hashing import PasswordHasherABC
 from src.auth.main.settings.settings import settings
 
 
-class PasswordHasher(PasswordHasherABC):
+class HashlibPasswordHasher(PasswordHasherABC):
     def hash(self, password: str) -> str:
 
         salt = (

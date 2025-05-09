@@ -1,0 +1,5 @@
+{
+    "TemplateName": "RegistrationNotificationTemplate",
+    "SubjectPart": " \"{{Успешная регистрация}}\"",
+    "HtmlPart": "<h1>Благодарим вас за регистрацию!</h1><<p>Для подтверждения емейла перейдите по ссылке: {{description}}</p>>"
+}

@@ -6,6 +6,12 @@ from src.auth.application.exeptions.exeptions import UserAlreadyExistsError
 from src.auth.application.repositories.hashing.hashing import PasswordHasherABC
 from src.auth.application.repositories.uow.uow import UnitOfWorkABC
 from src.auth.application.repositories.user_repository import UserRepositoryABC
+from src.auth.application.repositories.verificatation.verificate_email import (
+    EmailRepositoryABC,
+)
+from src.auth.application.repositories.verificatation.verification_token import (
+    TokenServiceABC,
+)
 from src.auth.domain.entity.user import User
 from src.auth.presentation.api.rest.v1.schemas.user import (
     UserCreateSchema,
@@ -14,9 +20,17 @@ from src.auth.presentation.api.rest.v1.schemas.user import (
 
 
 class CreateUserUseCase:
-    def __init__(self, uow: UnitOfWorkABC, hashing: PasswordHasherABC):
+    def __init__(
+        self,
+        uow: UnitOfWorkABC,
+        hashing: PasswordHasherABC,
+        email_service: EmailRepositoryABC,
+        token_service: TokenServiceABC,
+    ):
         self._uow = uow
         self._hashing = hashing
+        self._email_service = email_service
+        self._token_service = token_service
 
     async def __call__(self, user_data: UserCreateSchema) -> UserResponseSchema:
         async with self._uow:
@@ -37,11 +51,14 @@ class CreateUserUseCase:
                 created_at=datetime.datetime.now(),
                 updated_at=datetime.datetime.now(),
                 roles=[],
-                is_active=True,
+                is_active=False,
             )
 
             saved_user = await self._uow.user_repository.save(new_user)  # type: ignore[misc]
             await self._uow.commit()  # type: ignore[no-untyped-call]
+
+            token = self._token_service.generate_token(user_data.email)
+            await self._email_service.send_confirmation_email(user_data.email, token)
 
             return UserResponseSchema(
                 id=saved_user.id,

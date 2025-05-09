@@ -10,3 +10,6 @@ class UserRepositoryABC(ABC):
 
     @abstractmethod
     async def exists(self, email: str) -> bool: ...
+
+    @abstractmethod
+    async def get_by_email(self, email: str) -> User | None: ...
