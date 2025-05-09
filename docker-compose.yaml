@@ -23,3 +23,23 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
+
+
+  redis:
+    image: redis:7.0
+    env_file:
+      - .env
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    entrypoint: /app/entrypoint_localstack.sh
+    env_file:
+      - .env
+    volumes:
+      - ./src/auth/infrastructure/aws/ses_templates:/app/ses_templates 
+      - ./entrypoint_localstack.sh:/app/entrypoint_localstack.sh 
+    environment:  
+      - TEMPLATES_DIR=/app/ses_templates    
