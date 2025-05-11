@@ -57,6 +57,15 @@ jobs:
       with:
         python-version: "3.12"
 
+    - name: Create .env file      
+      run: |
+          echo "${{ secrets.env }}" >> .env
+
+    - name: Docker_start
+      run: |
+        docker compose up -d
+        
+
     - name: Wait for PostgreSQL
       run: |
         timeout 60 bash -c 'until nc -z postgres 5432; do sleep 2; done'
@@ -65,13 +74,13 @@ jobs:
       run: |
         docker compose exec auth poetry run alembic -c src/auth/alembic.ini upgrade head
       env:
-        DATABASE_URL: postgresql+asyncpg://test_user:test_pass@postgres:5432/test_db
+        DATABASE_URL: ${{secrets.env.TEST_DB_URL}}
 
     - name: Run tests
       run: |
         docker compose exec auth poetry run pytest src/tests -v --cov=src --cov-report=xml
       env:
-        DATABASE_URL: postgresql+asyncpg://test_user:test_pass@postgres:5432/test_db
+        DATABASE_URL: ${{secrets.env.TEST_DB_URL}}
 
     - name: Install diff-cover
       run: |
