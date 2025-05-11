@@ -32,41 +32,59 @@ jobs:
         with:
           checkName: 'mypy'
        
-  ttest:
+  tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.12"
 
-    - name: Create .env file      
+    - name: Install dependencies
       run: |
-        echo "${{ secrets.env }}" >> .env
+        poetry install --with dev
 
-    - name: Docker up
+    - name: Wait for PostgreSQL
       run: |
-        docker compose up -d
+        timeout 60 bash -c 'until nc -z postgres 5432; do sleep 2; done'
 
     - name: Run migrations
       run: |
-        docker compose exec auth poetry run alembic -c src/auth/alembic.ini upgrade head
+        poetry run alembic -c src/auth/alembic.ini upgrade head
       env:
         DATABASE_URL: postgresql+asyncpg://test_user:test_pass@postgres:5432/test_db
 
     - name: Run tests
       run: |
-        docker compose exec auth poetry run pytest --cov=src --cov-report=xml:coverage.xml
-    
-        - name: Install diff-cover
-        run: |
-          pip install diff-cover    
-  
+        poetry run pytest src/tests -v --cov=src --cov-report=xml
+      env:
+        DATABASE_URL: postgresql+asyncpg://test_user:test_pass@postgres:5432/test_db
+
+    - name: Install diff-cover
+      run: |
+        pip install diff-cover
+
     - name: Run diff-cover
       run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }}
-          else
-            diff-cover coverage.xml --compare-branch=origin/main
-          fi
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }}
+        else
+          diff-cover coverage.xml --compare-branch=origin/main
+        fi
