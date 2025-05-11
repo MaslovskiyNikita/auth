@@ -50,7 +50,7 @@ jobs:
 
       - name: Run migrations
         run: |
-          docker compose exec auth poetry run src/alembic -c src/auth/main/alembic.ini upgrade head
+          docker compose exec auth poetry run ./src/auth/alembic.ini -c src/auth/main/alembic.ini upgrade head
         env:
           DATABASE_URL: ${{ secrets.env.TEST_DATABASE_URL }}    
           
