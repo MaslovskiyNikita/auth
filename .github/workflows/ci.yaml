@@ -51,7 +51,7 @@ jobs:
 
     - name: Run tests
       run: |
-        poetry run pytest --cov=src --cov-report=xml:coverage.xml
+        docker compose exec auth poetry run pytest --cov=src --cov-report=xml:coverage.xml
     
         - name: Install diff-cover
         run: |
