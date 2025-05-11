@@ -51,7 +51,7 @@ jobs:
 
     - name: Run migrations
       run: |
-        poetry run alembic -c src/auth/alembic.ini upgrade head
+        docker compose exec auth poetry run alembic -c src/auth/alembic.ini upgrade head
       env:
         DATABASE_URL: postgresql+asyncpg://test_user:test_pass@postgres:5432/test_db
 
