@@ -25,10 +25,23 @@ dependencies = [
     "localstack (>=4.4.0,<5.0.0)",
     "redis (>=6.0.0,<7.0.0)",
     "aioboto3 (>=14.3.0,<15.0.0)",
-    "itsdangerous (>=2.2.0,<3.0.0)"
+    "itsdangerous (>=2.2.0,<3.0.0)",
+    "diff-cover (>=9.2.4,<10.0.0)",
+    "pytest (>=8.3.5,<9.0.0)",
+    "pytest-asyncio (>=0.26.0,<0.27.0)",
+    "faker (>=37.1.0,<38.0.0)",
+    "factory-boy (>=3.3.3,<4.0.0)",
+    "pytest-factoryboy (>=2.7.0,<3.0.0)",
+    "async-factory-boy (>=1.0.1,<2.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "pytest-cov (>=6.1.1,<7.0.0)"
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "--asyncio-mode=auto"

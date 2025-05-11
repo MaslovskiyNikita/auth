@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     aws_ses_secret_access_key: str = Field(..., env="AWS_SES_SECRET_ACCESS_KEY")
     aws_ses_endpoint_url: str = Field(..., env="AWS_SES_ENDPOINT_URL")
     token_secret_key: str = Field(..., env="TOKEN_SECRET_KEY")
+    test_db_url: str = Field(..., env="TEST_DB_URL")
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
