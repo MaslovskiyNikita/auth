@@ -49,6 +49,12 @@ jobs:
       run: |
         docker compose up -d
 
+    - name: Run migrations
+      run: |
+        poetry run alembic -c src/auth/alembic.ini upgrade head
+      env:
+        DATABASE_URL: postgresql+asyncpg://test_user:test_pass@postgres:5432/test_db
+
     - name: Run tests
       run: |
         docker compose exec auth poetry run pytest --cov=src --cov-report=xml:coverage.xml
