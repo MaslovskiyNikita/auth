@@ -32,40 +32,22 @@ jobs:
         with:
           checkName: 'mypy'
        
-  tests:
+  ttest:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Create .env file      
-        run: |
-          echo "${{ secrets.env }}" >> .env
-
-      - name: Docker up
-        run: |
-          docker compose up -d
-
-      - name: Run migrations
-        run: |
-          docker compose exec auth poetry run alembic -c ./src/auth/alembic.ini upgrade head
-        env:
-          DATABASE_URL: ${{ secrets.env.TEST_DATABASE_URL }}    
-          
-      - name: Run tests with pytest
-        run: |
-          docker compose exec auth poetry run pytest src/ --cov --cov-report=xml
-  
-      - name: Install diff-cover
-        run: |
-          pip install diff-cover    
-  
-      - name: Run diff-cover
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }}
-          else
-            diff-cover coverage.xml --compare-branch=origin/main
-          fi
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+    
+    - name: Run tests
+      run: |
+        poetry install
+        poetry run pytest --cov=src --cov-report=xml:coverage.xml
+    
+    - name: Run diff-cover
+      run: |
+        git fetch origin main
+        poetry run diff-cover coverage.xml --compare-branch origin/main --html-report report.html
+        poetry run diff-cover coverage.xml --compare-branch origin/main --fail-under=90
