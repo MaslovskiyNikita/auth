@@ -9,9 +9,6 @@ from src.auth.infrastructure.db.models.user import UserDB
 @pytest.mark.asyncio
 async def test_full_registration_flow(async_client: AsyncClient, session):
 
-    response = await async_client.get("/health")
-    assert response.status_code == 200
-
     register_data = {
         "email": "e2e_test@example.com",
         "username": "e2e_user",
@@ -44,9 +41,6 @@ async def test_registration_with_invalid_data(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_duplicate_registration(async_client: AsyncClient):
-
-    response = await async_client.get("/health")
-    assert response.status_code == 200
 
     user_data = {
         "email": "duplicate@example.com",

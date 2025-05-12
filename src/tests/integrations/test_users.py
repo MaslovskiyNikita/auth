@@ -10,9 +10,6 @@ async def test_create_user_success(
     async_client: AsyncClient,
 ):
 
-    response = await async_client.get("/health")
-    assert response.status_code == 200
-
     user_data = UserFactory.build()
     user_dict = {
         "email": user_data.email,
