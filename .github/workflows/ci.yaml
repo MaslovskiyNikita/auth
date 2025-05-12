@@ -69,7 +69,7 @@ jobs:
 
     - name: Run tests
       run: |
-        docker compose exec auth poetry run pytest src/tests -v --cov=src --cov-report=xml -s
+        docker compose exec auth poetry run pytest src/tests/ --cov --cov-report=xml
       env:
         DATABASE_URL: ${{secrets.env.TEST_DB_URL}}
 
