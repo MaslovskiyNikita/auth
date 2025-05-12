@@ -42,16 +42,5 @@ async def confirm_email(
         Provide[Container.validate_token_use_case]
     ),
 ):
-    try:
-        await use_case.execute(token=token)
-        return {"message": "Email successfully confirmed"}
-    except InvalidTokenError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"message": str(e), "code": "invalid_token"},
-        )
-    except UserNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={"message": str(e), "code": "user_not_found"},
-        )
+    await use_case.execute(token=token)
+    return {"message": "Email successfully confirmed"}
