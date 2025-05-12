@@ -1,4 +1,4 @@
-class BaseAppException(Exception):
+class BaseAppException(Exception):  # Для создания новых логик для базовых эксепшинов
     def __init__(self, message: str, *args):
         super().__init__(message, *args)
         self.message = message
