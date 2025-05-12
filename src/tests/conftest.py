@@ -16,7 +16,7 @@ from src.auth.main.settings.settings import settings
 
 TEST_DATABASE_URL = settings.test_db_url
 
-
+"""
 @pytest.fixture(scope="session")
 def event_loop_policy():
     return asyncio.DefaultEventLoopPolicy()
@@ -26,7 +26,7 @@ def event_loop_policy():
 async def event_loop():
     loop = asyncio.new_event_loop()
     yield loop
-    loop.close()
+    loop.close()"""
 
 
 @pytest.fixture(scope="session", autouse=True)
