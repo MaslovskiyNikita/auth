@@ -51,6 +51,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -79,8 +81,20 @@ jobs:
   
     - name: Run diff-cover
       run: |
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-            diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }}
-          else
-            diff-cover coverage.xml --compare-branch=origin/main
-          fi    
+
+    
+            # Определить базовую ветку
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              BASE_BRANCH="origin/${{ github.base_ref}}"
+            else
+              BASE_BRANCH="origin/main"
+            fi
+    
+            # Проверить существование ветки
+            if ! git rev-parse --verify $BASE_BRANCH >/dev/null 2>&1; then
+              echo "Base branch $BASE_BRANCH not found. Falling back to main"
+              BASE_BRANCH="origin/main"
+            fi
+    
+            echo "Comparing against base branch: $BASE_BRANCH"
+            diff-cover coverage.xml --compare-branch=$BASE_BRANCH
