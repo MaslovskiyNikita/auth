@@ -7,7 +7,7 @@ from src.auth.application.repositories.hashing.hashing import PasswordHasherABC
 from src.auth.application.repositories.uow.uow import UnitOfWorkABC
 from src.auth.application.repositories.user_repository import UserRepositoryABC
 from src.auth.application.repositories.verificatation.verificate_email import (
-    EmailRepositoryABC,
+    EmailServiceABC,
 )
 from src.auth.application.repositories.verificatation.verification_token import (
     TokenServiceABC,
@@ -24,7 +24,7 @@ class CreateUserUseCase:
         self,
         uow: UnitOfWorkABC,
         hashing: PasswordHasherABC,
-        email_service: EmailRepositoryABC,
+        email_service: EmailServiceABC,
         token_service: TokenServiceABC,
     ):
         self._uow = uow

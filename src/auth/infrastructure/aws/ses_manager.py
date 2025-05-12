@@ -4,12 +4,12 @@ from typing import Any, Dict
 import aioboto3
 
 from src.auth.application.repositories.verificatation.verificate_email import (
-    EmailRepositoryABC,
+    EmailServiceABC,
 )
 from src.auth.main.settings.settings import settings
 
 
-class SESEmailService(EmailRepositoryABC):
+class SESEmailService(EmailServiceABC):
     def __init__(
         self,
         aws_access_key: str,

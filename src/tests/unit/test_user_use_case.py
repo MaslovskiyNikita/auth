@@ -2,10 +2,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from src.auth.application.exeptions.exeptions import (
-    InvalidTokenError,
-    UserNotFoundError,
-)
+from src.auth.application.exeptions.exeptions import InvalidTokenError
 from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
 from src.auth.domain.entity.user import User
 from src.tests.unit.conftest import mock_token_service, mock_uow

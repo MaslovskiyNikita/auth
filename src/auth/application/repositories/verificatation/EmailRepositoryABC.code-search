@@ -1,0 +1,27 @@
+# Query: EmailServiceABC
+# ContextLines: 1
+
+5 results - 3 files
+
+src/auth/application/repositories/verificatation/verificate_email.py:
+  4  
+  5: class EmailServiceABC(ABC):
+  6      @abstractmethod
+
+src/auth/application/use_cases/user_use_case.py:
+   9  from src.auth.application.repositories.verificatation.verificate_email import (
+  10:     EmailServiceABC,
+  11  )
+
+  26          hashing: PasswordHasherABC,
+  27:         email_service: EmailServiceABC,
+  28          token_service: TokenServiceABC,
+
+src/auth/infrastructure/aws/ses_manager.py:
+   6  from src.auth.application.repositories.verificatation.verificate_email import (
+   7:     EmailServiceABC,
+   8  )
+
+  11  
+  12: class SESEmailService(EmailServiceABC):
+  13      def __init__(

@@ -1,5 +1,3 @@
-import asyncio
-
 import pytest
 from dependency_injector import providers
 from fastapi.testclient import TestClient
@@ -39,13 +37,11 @@ async def engine():
 
 @pytest.fixture
 async def session_factory(engine):
-
     return async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 @pytest.fixture
 async def session(session_factory):
-
     async with session_factory() as session:
         try:
             yield session
