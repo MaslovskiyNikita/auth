@@ -16,18 +16,6 @@ from src.auth.main.settings.settings import settings
 
 TEST_DATABASE_URL = settings.test_db_url
 
-"""
-@pytest.fixture(scope="session")
-def event_loop_policy():
-    return asyncio.DefaultEventLoopPolicy()
-
-
-@pytest.fixture(scope="session")
-async def event_loop():
-    loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()"""
-
 
 @pytest.fixture(scope="session", autouse=True)
 async def setup_db():
@@ -46,7 +34,7 @@ async def setup_db():
 
 @pytest.fixture
 async def engine():
-    return create_async_engine(TEST_DATABASE_URL)
+    return create_async_engine(TEST_DATABASE_URL, echo=True)
 
 
 @pytest.fixture
