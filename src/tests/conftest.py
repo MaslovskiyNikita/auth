@@ -3,7 +3,7 @@ import asyncio
 import pytest
 from dependency_injector import providers
 from fastapi.testclient import TestClient
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import sessionmaker
@@ -63,7 +63,9 @@ async def async_client(uow):
 
     container.uow.override(providers.Factory(lambda: uow))
 
-    async with AsyncClient(base_url="http://127.0.0.1:8000") as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://127.0.0.1:8000"
+    ) as client:
         yield client
 
 
