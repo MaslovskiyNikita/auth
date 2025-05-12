@@ -34,20 +34,6 @@ jobs:
        
   tests:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_pass
-          POSTGRES_DB: test_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
@@ -72,8 +58,6 @@ jobs:
         docker compose exec auth poetry run pytest src/tests/ --cov --cov-report=xml
       env:
         DATABASE_URL: ${{secrets.env.TEST_DB_URL}}
-
-
     
     - name: Install diff-cover
       run: |
@@ -82,15 +66,12 @@ jobs:
     - name: Run diff-cover
       run: |
 
-    
-            # Определить базовую ветку
             if [ "${{ github.event_name }}" = "pull_request" ]; then
               BASE_BRANCH="origin/${{ github.base_ref}}"
             else
               BASE_BRANCH="origin/main"
             fi
-    
-            # Проверить существование ветки
+
             if ! git rev-parse --verify $BASE_BRANCH >/dev/null 2>&1; then
               echo "Base branch $BASE_BRANCH not found. Falling back to main"
               BASE_BRANCH="origin/main"
