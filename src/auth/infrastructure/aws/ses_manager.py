@@ -8,7 +8,7 @@ from src.auth.application.repositories.verificatation.verificate_email import (
 )
 from src.auth.main.settings.settings import settings
 
-
+"""
 class SESEmailService(EmailServiceABC):
     def __init__(
         self,
@@ -38,3 +38,24 @@ class SESEmailService(EmailServiceABC):
                 Template="RegistrationNotificationTemplate",
                 TemplateData=json.dumps({"confirmation_url": confirmation_url}),
             )
+"""
+
+
+class SESEmailService(EmailServiceABC):
+    def __init__(
+        self,
+        ses_client: Any,  # Клиент будет внедряться через DI
+        source_email: str,
+    ):
+        self.ses_client = ses_client
+        self.source_email = source_email
+
+    async def send_confirmation_email(self, to_email: str, token: str) -> None:
+        confirmation_url = f"{settings.backend_url}/confirm-email?token={token}"
+
+        await self.ses_client.send_templated_email(
+            Source=self.source_email,
+            Destination={"ToAddresses": [to_email]},
+            Template="RegistrationNotificationTemplate",
+            TemplateData=json.dumps({"confirmation_url": confirmation_url}),
+        )

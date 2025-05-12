@@ -1,3 +1,4 @@
+import aioboto3
 from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
@@ -39,13 +40,20 @@ class Container(containers.DeclarativeContainer):
 
     password_hasher = providers.Factory(HashlibPasswordHasher)
 
-    email_service = providers.Factory(
-        SESEmailService,
-        aws_access_key=settings.aws_ses_access_key_id,
-        aws_secret_key=settings.aws_ses_secret_access_key,
-        region=settings.region,
+    aws_session = providers.Singleton(
+        aioboto3.Session,
+        aws_access_key_id=settings.aws_ses_access_key_id,
+        aws_secret_access_key=settings.aws_ses_secret_access_key,
+        region_name=settings.region,
+    )
+
+    ses_client = providers.Resource(
+        aws_session.provided.client("ses").asynccontextmanager(),
         endpoint_url=settings.aws_ses_endpoint_url,
-        source_email=settings.email_host_user,
+    )
+
+    email_service = providers.Factory(
+        SESEmailService, ses_client=ses_client, source_email=settings.email_host_user
     )
 
     token_service = providers.Factory(
