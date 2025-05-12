@@ -70,3 +70,17 @@ jobs:
         docker compose exec auth poetry run pytest src/tests -v --cov=src --cov-report=xml -s
       env:
         DATABASE_URL: ${{secrets.env.TEST_DB_URL}}
+
+
+    
+    - name: Install diff-cover
+      run: |
+          pip install diff-cover    
+  
+    - name: Run diff-cover
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+            diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }}
+          else
+            diff-cover coverage.xml --compare-branch=origin/main
+          fi    
