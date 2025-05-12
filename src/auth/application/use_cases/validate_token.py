@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from jwt import PyJWTError
 
 from src.auth.application.exeptions.exeptions import (
     InvalidTokenError,
@@ -18,8 +19,8 @@ class ValidateTokenUseCase:
     async def execute(self, token: str) -> None:
         try:
             email = self._token_service.validate_token(token)
-        except Exception as e:
-            raise InvalidTokenError("Invalid or expired token") from e
+        except PyJWTError as e:
+            raise InvalidTokenError("Invalid or expired token")
 
         async with self._uow:
             user_db = await self._uow.user_repository.get_by_email(email)  # type: ignore[attr-defined]
