@@ -72,7 +72,7 @@ async def run_async_migrations() -> None:
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
-        url=os.getenv("TEST_DB_URL"),
+        url=os.getenv("DB_URL"),
         poolclass=pool.NullPool,
     )
 
