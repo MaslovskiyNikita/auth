@@ -1,16 +1,30 @@
-class UserAlreadyExistsError(Exception):
+class BaseAppException(Exception):
+    def __init__(self, message: str, *args):
+        super().__init__(message, *args)
+        self.message = message
+        self.args = args
+
+
+class DefaultMessageException(BaseAppException):
+
+    default_message: str
+
+    def __init__(self, message: str = None, *args):  # type: ignore[assignment]
+        if message is None:
+            message = self.default_message
+        super().__init__(message, *args)
+
+
+class UserAlreadyExistsError(BaseAppException):
     def __init__(self, email: str):
+        message = f"User with email {email} already exists"
+        super().__init__(message)
         self.email = email
-        super().__init__(f"User with email {email} already exists")
 
 
-class InvalidTokenError(Exception):
-    def __init__(self, message: str = "Invalid or expired token"):
-        super().__init__(message)
-        self.message = message
+class InvalidTokenError(DefaultMessageException):
+    default_message = "Invalid or expired token"
 
 
-class UserNotFoundError(Exception):
-    def __init__(self, message: str = "User not found"):
-        super().__init__(message)
-        self.message = message
+class UserNotFoundError(DefaultMessageException):
+    default_message = "User not found"
