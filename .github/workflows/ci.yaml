@@ -74,6 +74,6 @@ jobs:
               echo "Base branch $BASE_BRANCH not found. Falling back to main"
               BASE_BRANCH="origin/main"
             fi
-    
+      
             echo "Comparing against base branch: $BASE_BRANCH"
             diff-cover coverage.xml --compare-branch=$BASE_BRANCH
