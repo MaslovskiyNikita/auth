@@ -56,8 +56,6 @@ jobs:
     - name: Run tests
       run: |
         docker compose exec auth poetry run pytest src/tests/ --cov --cov-report=xml
-      env:
-        DATABASE_URL: ${{secrets.env.TEST_DB_URL}}
     
     - name: Install diff-cover
       run: |
