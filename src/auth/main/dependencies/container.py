@@ -40,20 +40,18 @@ class Container(containers.DeclarativeContainer):
 
     password_hasher = providers.Factory(HashlibPasswordHasher)
 
-    aws_session = providers.Singleton(
+    session_aioboto3 = providers.Singleton(
         aioboto3.Session,
         aws_access_key_id=settings.aws_ses_access_key_id,
         aws_secret_access_key=settings.aws_ses_secret_access_key,
         region_name=settings.region,
     )
 
-    ses_client = providers.Resource(
-        aws_session.provided.client("ses").asynccontextmanager(),
-        endpoint_url=settings.aws_ses_endpoint_url,
-    )
-
     email_service = providers.Factory(
-        SESEmailService, ses_client=ses_client, source_email=settings.email_host_user
+        SESEmailService,
+        session=session_aioboto3,
+        endpoint_url=settings.aws_ses_endpoint_url,
+        source_email=settings.email_host_user,
     )
 
     token_service = providers.Factory(
