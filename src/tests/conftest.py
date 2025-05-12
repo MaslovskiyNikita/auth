@@ -72,7 +72,9 @@ async def uow(session):
 
 @pytest.fixture
 async def async_client(uow):
+
     container.uow.override(providers.Factory(lambda: uow))
+
     async with AsyncClient(base_url="http://127.0.0.1:8000") as client:
         yield client
 
