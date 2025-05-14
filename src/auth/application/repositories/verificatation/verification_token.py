@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import timedelta
 
 
 class TokenServiceABC(ABC):
@@ -7,3 +8,9 @@ class TokenServiceABC(ABC):
 
     @abstractmethod
     def validate_token(self, token: str) -> str: ...
+
+    @abstractmethod
+    def create_jwt_token(self, data: str, expires: int) -> str: ...
+
+    @abstractmethod
+    def decode_jwt_token(self, token: str): ...

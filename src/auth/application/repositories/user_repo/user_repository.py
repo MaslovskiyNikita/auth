@@ -13,3 +13,6 @@ class UserRepositoryABC(ABC):
 
     @abstractmethod
     async def get_by_email(self, email: str) -> User | None: ...
+
+    @abstractmethod
+    async def get_by_email_password(self, email: str) -> str: ...

@@ -1,14 +1,18 @@
 from typing import Annotated
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.application.exeptions.exeptions import (
     InvalidTokenError,
     UserNotFoundError,
 )
-from src.auth.application.repositories.user_repository import UserRepositoryABC
+from src.auth.application.repositories.user_repo.user_repository import (
+    UserRepositoryABC,
+)
+from src.auth.application.use_cases.login_use_case import LoginUserUseCase
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
 from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
 from src.auth.domain.entity.user import User
@@ -44,3 +48,17 @@ async def confirm_email(
 ):
     await use_case.execute(token=token)
     return {"message": "Email successfully confirmed"}
+
+
+@router.post("/login")  # type: ignore[misc]
+@inject  # type: ignore[misc]
+async def login(
+    email: str,
+    password: str,
+    use_case: LoginUserUseCase = Depends(Provide[Container.login_user_use_case]),
+    response: Response = None,
+):
+    tokens = await use_case(email=email, password=password)
+    response.headers["X-Access-Token"] = tokens.access_token
+    response.headers["X-Refresh-Token"] = tokens.refresh_token
+    return {"message": "Login successful"}

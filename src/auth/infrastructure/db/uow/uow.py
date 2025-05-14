@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.auth.application.repositories.uow.uow import UnitOfWorkABC
-from src.auth.application.repositories.user_repository import UserRepositoryABC
+from src.auth.application.repositories.user_repo.user_repository import (
+    UserRepositoryABC,
+)
 from src.auth.infrastructure.repositories.user_repository_impl import (
     SQLAlchemyUserRepository,
 )

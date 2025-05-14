@@ -5,7 +5,9 @@ import uuid
 from src.auth.application.exeptions.exeptions import UserAlreadyExistsError
 from src.auth.application.repositories.hashing.hashing import PasswordHasherABC
 from src.auth.application.repositories.uow.uow import UnitOfWorkABC
-from src.auth.application.repositories.user_repository import UserRepositoryABC
+from src.auth.application.repositories.user_repo.user_repository import (
+    UserRepositoryABC,
+)
 from src.auth.application.repositories.verificatation.verificate_email import (
     EmailServiceABC,
 )

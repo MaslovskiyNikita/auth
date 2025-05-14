@@ -17,6 +17,12 @@ class RedisSettings(BaseSettings):
         return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
 
 
+class JWTTokensSettings(BaseSettings):
+    access_token_expire: int = Field(..., env="ACCESS_TOKEN_EXPIRE")
+    refresh_token_expire: int = Field(..., env="REFRESH_TOKEN_EXPIRE")
+    jwt_hashing: str = Field(..., env="JWT_HASHING")
+
+
 class Settings(BaseSettings):
     db_url: str = Field(..., env="DB_URL")
     salt: str = Field(..., env="SALT")
@@ -34,6 +40,8 @@ class Settings(BaseSettings):
     aws_ses_endpoint_url: str = Field(..., env="AWS_SES_ENDPOINT_URL")
     token_secret_key: str = Field(..., env="TOKEN_SECRET_KEY")
     test_db_url: str = Field(..., env="TEST_DB_URL")
+
+    jwt_token_settings: JWTTokensSettings = JWTTokensSettings()
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"

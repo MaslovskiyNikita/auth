@@ -2,6 +2,7 @@ import aioboto3
 from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from src.auth.application.use_cases.login_use_case import LoginUserUseCase
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
 from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
 from src.auth.infrastructure.aws.ses_manager import SESEmailService
@@ -71,6 +72,10 @@ class Container(containers.DeclarativeContainer):
 
     validate_token_use_case = providers.Factory(
         ValidateTokenUseCase, token_service=token_service, uow=uow
+    )
+
+    login_user_use_case = providers.Factory(
+        LoginUserUseCase, uow=uow, token_service=token_service, hashing=password_hasher
     )
 
 

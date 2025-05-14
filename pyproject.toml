@@ -34,7 +34,7 @@ dependencies = [
     "pytest-factoryboy (>=2.7.0,<3.0.0)",
     "async-factory-boy (>=1.0.1,<2.0.0)",
     "httpx (>=0.28.1,<0.29.0)",
-    "pytest-cov (>=6.1.1,<7.0.0)"
+    "pytest-cov (>=6.1.1,<7.0.0)",
 ]
 
 

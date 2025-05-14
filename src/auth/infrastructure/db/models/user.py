@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 from datetime import datetime
-from typing import List
+from typing import TYPE_CHECKING, List
 from uuid import UUID
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.auth.infrastructure.db.models.base import Base
-from src.auth.infrastructure.db.models.user_role import RoleDB
+
+if TYPE_CHECKING:
+    from src.auth.infrastructure.db.models.user_role import RoleDB
 
 
 class UserDB(Base):
@@ -20,7 +24,9 @@ class UserDB(Base):
     username: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
-    roles: Mapped[List[RoleDB]] = ForeignKey("roles", ondelete="CASCADE")
+    roles: Mapped[List["RoleDB"]] = relationship(
+        "RoleDB", secondary="user_roles", back_populates="users", lazy="selectin"
+    )
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -32,3 +38,15 @@ class UserDB(Base):
         onupdate=func.now(),
         nullable=False,
     )
+
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "email": self.email,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "password": self.password,
+            "roles": [str(role.id) for role in self.roles],
+            "is_active": self.is_active,
+        }

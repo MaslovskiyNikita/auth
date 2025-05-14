@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from contextlib import AbstractAsyncContextManager
 
-from src.auth.application.repositories.user_repository import UserRepositoryABC
+from src.auth.application.repositories.user_repo.user_repository import (
+    UserRepositoryABC,
+)
 
 
 class UnitOfWorkABC(AbstractAsyncContextManager, ABC):

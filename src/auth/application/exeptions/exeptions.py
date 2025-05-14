@@ -28,3 +28,11 @@ class InvalidTokenError(DefaultMessageException):
 
 class UserNotFoundError(DefaultMessageException):
     default_message = "User not found"
+
+
+class UserNotActiveError(DefaultMessageException):
+    default_message = "not verifyed email"
+
+
+class InvalidPasswordError(DefaultMessageException):
+    default_message = "Invalid password"
