@@ -1,5 +1,6 @@
 import aioboto3
 from dependency_injector import containers, providers
+from redis import Redis  # type: ignore[import-untyped]
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.auth.application.use_cases.login_use_case import LoginUserUseCase
@@ -9,6 +10,7 @@ from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
 from src.auth.infrastructure.aws.ses_manager import SESEmailService
 from src.auth.infrastructure.db.uow.uow import UnitOfWork
 from src.auth.infrastructure.hashing.hashing import HashlibPasswordHasher
+from src.auth.infrastructure.redis.redis_service import RedisService
 from src.auth.infrastructure.repositories.token_use_case import ItsDangerousTokenService
 from src.auth.infrastructure.repositories.user_repository_impl import (
     SQLAlchemyUserRepository,
@@ -61,6 +63,19 @@ class Container(containers.DeclarativeContainer):
         secret_key=settings.token_secret_key,
         salt=settings.salt,
         max_age=3600,
+    )
+
+    redis = providers.Singleton(
+        Redis,
+        host=settings.redis_config.host,
+        port=settings.redis_config.port,
+        db=settings.redis_config.db,
+    )
+
+    redis_repository = providers.Factory(RedisService, redis=redis)
+
+    refresh_token_use_case = providers.Factory(
+        RefreshJWTTokensUseCase, redis=redis_repository, token_service=token_service
     )
 
     user_use_case = providers.Factory(
