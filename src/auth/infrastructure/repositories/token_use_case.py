@@ -30,7 +30,12 @@ class ItsDangerousTokenService(TokenServiceABC):
         return jwt.encode(
             to_encode,
             settings.token_secret_key,
-            algorithm=settings.jwt_token_settings.jwt_hashing,
+            algorithm=settings.jwt_config.jwt_hashing,
         )
 
-    def decode_jwt_token(self, token: str): ...
+    def decode_jwt_token(self, token: str) -> dict:
+        return jwt.decode(
+            token,
+            settings.token_secret_key,
+            algorithm=settings.jwt_config.jwt_hashing,
+        )

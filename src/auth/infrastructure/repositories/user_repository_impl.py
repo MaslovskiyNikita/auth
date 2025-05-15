@@ -29,5 +29,8 @@ class SQLAlchemyUserRepository(UserRepositoryABC):
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def get_by_email_password(self, email):
-        return SQLAlchemyUserRepository.get_by_email(email=email).password
+    async def get_by_email_password(self, email: str):
+        return SQLAlchemyUserRepository.get_by_email(email=email).password  # type: ignore[call-arg]
+
+    async def add(self, user: User) -> None:
+        return self.session.add(user)

@@ -35,8 +35,8 @@ class CreateUserUseCase:
         self._token_service = token_service
 
     async def __call__(self, user_data: UserCreateSchema) -> UserResponseSchema:
-        async with self._uow:
-            existing_user = await self._uow.user_repository.exists(user_data.email)  # type: ignore[*]
+        async with self._uow as uow:
+            existing_user = await uow.user_repository.exists(user_data.email)  # type: ignore[*]
 
             if existing_user:
                 raise UserAlreadyExistsError(user_data.email)
@@ -56,8 +56,8 @@ class CreateUserUseCase:
                 is_active=False,
             )
 
-            saved_user = await self._uow.user_repository.save(new_user)  # type: ignore[misc]
-            await self._uow.commit()  # type: ignore[no-untyped-call]
+            saved_user = await uow.user_repository.save(new_user)  # type: ignore[misc]
+            await uow.commit()  # type: ignore[no-untyped-call]
 
             token = self._token_service.generate_token(user_data.email)
             await self._email_service.send_confirmation_email(user_data.email, token)

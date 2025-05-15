@@ -37,9 +37,9 @@ class LoginUserUseCase:
         self._token_service = token_service
         self._hashing = hashing
 
-    async def __call__(self, email: str, password: str):
-        async with self._uow:
-            existing_user = await self._uow.user_repository.get_by_email(email)  # type: ignore[*]
+    async def __call__(self, email: str, password: str) -> TokenPair:
+        async with self._uow as uow:
+            existing_user = await uow.user_repository.get_by_email(email)  # type: ignore[*]
 
             if not existing_user:
                 raise UserNotFoundError(email)
@@ -56,14 +56,14 @@ class LoginUserUseCase:
 
             access_token = self._token_service.create_jwt_token(
                 data=existing_user,
-                expires=settings.jwt_token_settings.access_token_expire,
+                expires=settings.jwt_config.access_token_expire,
             )
 
             refresh_token = self._token_service.create_jwt_token(
                 data=existing_user,
-                expires=settings.jwt_token_settings.refresh_token_expire,
+                expires=settings.jwt_config.refresh_token_expire,
             )
 
-            token_pair = TokenPair(access=access_token, refresh=refresh_token)
+            token_pair = TokenPair(access_token, refresh_token)
 
             return token_pair

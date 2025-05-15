@@ -34,5 +34,9 @@ class UserNotActiveError(DefaultMessageException):
     default_message = "not verifyed email"
 
 
+class UserNotLogged(DefaultMessageException):
+    default_message = "you are not logged"
+
+
 class InvalidPasswordError(DefaultMessageException):
     default_message = "Invalid password"

@@ -1,51 +1,51 @@
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class RedisSettings(BaseSettings):
-    redis_host: str = Field(..., env="REDIS_HOST")
-    redis_port: int = Field(..., env="REDIS_PORT")
-    redis_db: int = Field(..., env="REDIS_DB")
-    celery_broker_url: str = Field(..., env="CELERY_BROKER_URL")
-
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", env_prefix="REDIS_", extra="ignore"
     )
 
+    host: str
+    port: int
+    db: int
+
     @property
-    def redis_url(self):
-        return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
+    def redis_url(self) -> str:
+        return f"redis://{self.host}:{self.port}/{self.db}"
 
 
 class JWTTokensSettings(BaseSettings):
-    access_token_expire: int = Field(..., env="ACCESS_TOKEN_EXPIRE")
-    refresh_token_expire: int = Field(..., env="REFRESH_TOKEN_EXPIRE")
-    jwt_hashing: str = Field(..., env="JWT_HASHING")
-
-
-class Settings(BaseSettings):
-    db_url: str = Field(..., env="DB_URL")
-    salt: str = Field(..., env="SALT")
-    hashing_type: str = Field(..., env="HASHING_TYPE")
-    iterations: int = Field(..., env="ITERATIONS")
-
-    redis_settings: RedisSettings = RedisSettings()
-
-    services: str = Field(..., env="SERVICES")
-    backend_url: str = Field(..., env="BACKEND_URL")
-    email_host_user: str = Field(..., env="EMAIL_HOST_USER")
-    region: str = Field(..., env="REGION")
-    aws_ses_access_key_id: str = Field(..., env="AWS_SES_ACCESS_KEY_ID")
-    aws_ses_secret_access_key: str = Field(..., env="AWS_SES_SECRET_ACCESS_KEY")
-    aws_ses_endpoint_url: str = Field(..., env="AWS_SES_ENDPOINT_URL")
-    token_secret_key: str = Field(..., env="TOKEN_SECRET_KEY")
-    test_db_url: str = Field(..., env="TEST_DB_URL")
-
-    jwt_token_settings: JWTTokensSettings = JWTTokensSettings()
-
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
+    access_token_expire: int
+    refresh_token_expire: int
+    jwt_hashing: str
 
-settings = Settings()
+
+class AppSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+
+    db_url: str
+    salt: str
+    hashing_type: str
+    iterations: int
+    services: str
+    backend_url: str
+    email_host_user: str
+    region: str
+    aws_ses_access_key_id: str
+    aws_ses_secret_access_key: str
+    aws_ses_endpoint_url: str
+    token_secret_key: str
+    test_db_url: str
+
+    redis_config: RedisSettings = RedisSettings()
+    jwt_config: JWTTokensSettings = JWTTokensSettings()
+
+
+settings = AppSettings()

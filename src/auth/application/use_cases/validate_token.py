@@ -19,15 +19,15 @@ class ValidateTokenUseCase:
     async def execute(self, token: str) -> None:
         try:
             email = self._token_service.validate_token(token)
-        except PyJWTError as e:
-            raise InvalidTokenError("Invalid or expired token")
+        except:
+            raise InvalidTokenError
 
-        async with self._uow:
-            user_db = await self._uow.user_repository.get_by_email(email)  # type: ignore[attr-defined]
+        async with self._uow as uow:
+            user_db = await uow.user_repository.get_by_email(email)  # type: ignore[attr-defined]
             if not user_db:
-                raise UserNotFoundError("User not found")
+                raise UserNotFoundError
 
             user_db.is_active = True
-            self._uow.session.add(user_db)  # type: ignore[attr-defined, no-untyped-call]
+            await uow.user_repository.add(user_db)  # type: ignore[attr-defined, no-untyped-call]
 
-            await self._uow.commit()  # type: ignore[no-untyped-call]
+            await uow.commit()  # type: ignore[no-untyped-call]

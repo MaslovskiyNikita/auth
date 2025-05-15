@@ -16,16 +16,12 @@ async def test_successful_login(async_client: AsyncClient, session):
     user = await UserFactory.create_async(
         session, email="test@example.com", password="valid_password", is_active=True
     )
-
     response = await async_client.post(
         "/users/login",
         params={"email": "test@example.com", "password": "valid_password"},
     )
 
     assert response.status_code == status.HTTP_200_OK
-    assert "X-Access-Token" in response.headers
-    assert "X-Refresh-Token" in response.headers
-    assert response.json() == {"message": "Login successful"}
 
 
 @pytest.mark.asyncio

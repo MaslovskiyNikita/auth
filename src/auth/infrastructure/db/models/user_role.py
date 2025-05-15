@@ -38,7 +38,7 @@ class RoleDB(Base):
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
 
     users: Mapped[List["UserDB"]] = relationship(
-        "UserDB", secondary="user_roles", back_populates="roles", lazy="selectin"
+        "UserDB", secondary="user_roles", back_populates="roles", lazy="raise"
     )
 
     permissions: Mapped[List["PermissionsDB"]] = relationship(
