@@ -16,23 +16,28 @@ PUBLIC_PATHS = {
 
 @app.middleware("http")  # type: ignore[misc]
 async def jwt_middleware(request: Request, call_next):
-    if request.url in PUBLIC_PATHS:
+    if request.url.path in PUBLIC_PATHS:
         return await call_next(request)
 
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
+    if not auth_header:
         raise UserNotLogged
 
-    access_token = auth_header.split(" ")[1]
+    access_token = (
+        auth_header.split(" ")[1] if auth_header.startswith("Bearer ") else auth_header
+    )
 
     try:
-        jwt.decode(
+        payload = jwt.decode(
             access_token,
             settings.token_secret_key,
-            algorithm=settings.jwt_config.jwt_hashing,
+            algorithm=[settings.jwt_config.jwt_hashing],
             options={"verify_exp": True},
         )
+
     except:
         raise InvalidTokenError
+
+    request.state.jwt_payload = payload
 
     return await call_next(request)

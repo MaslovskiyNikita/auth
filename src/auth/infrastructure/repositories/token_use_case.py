@@ -23,19 +23,20 @@ class ItsDangerousTokenService(TokenServiceABC):
     def validate_token(self, token: str) -> str:
         return self.serializer.loads(token, salt=self.salt, max_age=self.max_age)
 
-    def create_jwt_token(self, data: UserDB, expires) -> str:  # type: ignore[override]
-        to_encode = data.to_dict()
+    def create_jwt_token(self, data: dict, expires) -> str:  # type: ignore[override]
+
         expire = datetime.datetime.now() + datetime.timedelta(minutes=expires)
-        to_encode.update({"exp": expire})
+        data.update({"exp": expire})
         return jwt.encode(
-            to_encode,
+            data,
             settings.token_secret_key,
             algorithm=settings.jwt_config.jwt_hashing,
         )
 
-    def decode_jwt_token(self, token: str) -> dict:
+    def decode_jwt_token(self, token: str) -> dict:  # type: ignore[override]
         return jwt.decode(
             token,
             settings.token_secret_key,
             algorithm=settings.jwt_config.jwt_hashing,
+            options={"verify_exp": True},
         )

@@ -55,12 +55,12 @@ class LoginUserUseCase:
                 raise InvalidPasswordError()
 
             access_token = self._token_service.create_jwt_token(
-                data=existing_user,
+                data=existing_user.to_dict(),
                 expires=settings.jwt_config.access_token_expire,
             )
 
             refresh_token = self._token_service.create_jwt_token(
-                data=existing_user,
+                data=existing_user.to_dict(),
                 expires=settings.jwt_config.refresh_token_expire,
             )
 

@@ -2,6 +2,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
 
 from src.auth.application.use_cases.login_use_case import LoginUserUseCase
+from src.auth.application.use_cases.refresh_jwt_tokens import RefreshJWTTokensUseCase
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
 from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
 from src.auth.main.dependencies.container import Container
@@ -42,6 +43,19 @@ async def login(
     use_case: LoginUserUseCase = Depends(Provide[Container.login_user_use_case]),
 ):
     tokens = await use_case(email=email, password=password)
+    return {
+        "access_token": tokens.access_token,
+        "refresh_token": tokens.refresh_token,
+    }
+
+
+@router.post("/refresh")  # type: ignore[misc]
+@inject  # type: ignore[misc]
+async def refresh(
+    token: str,
+    use_case: RefreshJWTTokensUseCase = Depends(Provide[Container.login_user_use_case]),
+):
+    tokens = await use_case(token)
     return {
         "access_token": tokens.access_token,
         "refresh_token": tokens.refresh_token,

@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.auth.application.use_cases.login_use_case import LoginUserUseCase
+from src.auth.application.use_cases.refresh_jwt_tokens import RefreshJWTTokensUseCase
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
 from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
 from src.auth.infrastructure.aws.ses_manager import SESEmailService
@@ -76,6 +77,10 @@ class Container(containers.DeclarativeContainer):
 
     login_user_use_case = providers.Factory(
         LoginUserUseCase, uow=uow, token_service=token_service, hashing=password_hasher
+    )
+
+    refresh_jwt_tokens_use_case = providers.Factory(
+        RefreshJWTTokensUseCase, token_service=token_service
     )
 
 
