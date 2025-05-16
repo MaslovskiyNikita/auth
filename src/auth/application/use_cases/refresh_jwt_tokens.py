@@ -1,6 +1,6 @@
 from src.auth.application.dto.token_pair import TokenPair
 from src.auth.application.exeptions.exeptions import InvalidTokenError
-from src.auth.application.repositories.redis.redis import RedisServiceABC
+from src.auth.application.repositories.redis.redis import CashServiceABC
 from src.auth.application.repositories.verificatation.verification_token import (
     TokenServiceABC,
 )
@@ -8,13 +8,13 @@ from src.auth.main.settings.settings import settings
 
 
 class RefreshJWTTokensUseCase:
-    def __init__(self, token_service: TokenServiceABC, redis: RedisServiceABC):
+    def __init__(self, token_service: TokenServiceABC, redis: CashServiceABC):
         self._token_service = token_service
         self._redis_service = redis
 
     async def __call__(self, refresh_token: str) -> TokenPair:
 
-        if await self._redis_service.is_blacklisted(refresh_token):  # type: ignore[call-arg]
+        if await self._redis_service.get(refresh_token):  # type: ignore[call-arg]
             raise InvalidTokenError("Token revoked")
 
         try:
@@ -29,7 +29,7 @@ class RefreshJWTTokensUseCase:
             data=payload, expires=settings.jwt_config.refresh_token_expire
         )
 
-        await self._redis_service.add_to_blacklist(
+        await self._redis_service.add(
             jwt=refresh_token, expire=int(payload["exp"])  # type: ignore[index]
         )
 

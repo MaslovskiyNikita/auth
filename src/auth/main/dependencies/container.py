@@ -65,14 +65,7 @@ class Container(containers.DeclarativeContainer):
         max_age=3600,
     )
 
-    redis = providers.Singleton(
-        Redis,
-        host=settings.redis_config.host,
-        port=settings.redis_config.port,
-        db=settings.redis_config.db,
-    )
-
-    redis_repository = providers.Factory(RedisService, redis=redis)
+    redis_repository = providers.Factory(RedisService)
 
     refresh_token_use_case = providers.Factory(
         RefreshJWTTokensUseCase, redis=redis_repository, token_service=token_service
