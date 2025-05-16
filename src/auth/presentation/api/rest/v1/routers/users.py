@@ -53,7 +53,9 @@ async def login(
 @inject  # type: ignore[misc]
 async def refresh(
     token: str,
-    use_case: RefreshJWTTokensUseCase = Depends(Provide[Container.login_user_use_case]),
+    use_case: RefreshJWTTokensUseCase = Depends(
+        Provide[Container.refresh_jwt_tokens_use_case]
+    ),
 ):
     tokens = await use_case(token)
     return {
