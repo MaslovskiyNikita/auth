@@ -12,10 +12,10 @@ def init_middleware(app):
 
     PUBLIC_PATHS = {
         "/users/login",
-        "/users",
-        "/docs",
+        "/users/",
+        "/docs/",
         "/openapi.json",
-        "/users/confirm-email",
+        "/users/confirm-email/",
     }
 
     @app.middleware("http")  # type: ignore[misc]
