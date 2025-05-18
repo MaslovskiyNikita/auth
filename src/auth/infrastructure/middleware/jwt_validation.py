@@ -14,7 +14,7 @@ from src.auth.main.settings.settings import settings
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
     PUBLIC_PATHS = {
-        "/users/login/",
+        "/users/login",
         "/users/",
         "/docs",
         "/openapi.json",
