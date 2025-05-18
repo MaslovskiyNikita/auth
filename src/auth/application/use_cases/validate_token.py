@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from jwt import PyJWTError
 
-from src.auth.application.exeptions.exeptions import (
+from src.auth.application.exeptions.user_exeptions import (
     InvalidTokenError,
     UserNotFoundError,
 )
@@ -29,5 +29,4 @@ class ValidateTokenUseCase:
 
             user_db.is_active = True
             await uow.user_repository.add(user_db)  # type: ignore[attr-defined, no-untyped-call]
-
-            await uow.commit()  # type: ignore[no-untyped-call]
+            await uow.commit()

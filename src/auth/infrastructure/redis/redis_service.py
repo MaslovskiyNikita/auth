@@ -1,10 +1,10 @@
 from redis.asyncio import Redis  # type: ignore[import-untyped]
 
-from src.auth.application.repositories.redis.redis import CashServiceABC
-from src.auth.main.settings import settings
+from src.auth.application.repositories.redis.cesh_service import CeshServiceABC
+from src.auth.main.settings.settings import settings
 
 
-class RedisService(CashServiceABC):
+class CeshService(CeshServiceABC):
     def __init__(self):
         self._redis = Redis(
             host=settings.redis_config.host,

@@ -21,10 +21,12 @@ class SESEmailService(EmailServiceABC):
         self.source_email = source_email
 
     async def send_confirmation_email(self, to_email: str, token: str) -> None:
-        confirmation_url = f"{settings.backend_url}/confirm-email?token={token}"
+        confirmation_url = (
+            f"{settings.aws_settings.backend_url}/confirm-email?token={token}"
+        )
 
         async with self.session.client(
-            settings.services, endpoint_url=self.endpoint_url
+            settings.aws_settings.services, endpoint_url=self.endpoint_url
         ) as client:
             await client.send_templated_email(
                 Source=self.source_email,

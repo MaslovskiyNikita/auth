@@ -7,4 +7,4 @@ class UserDataDTO:
     username: str
     first_name: str
     last_name: str
-    roles: list
+    roles: list[str]

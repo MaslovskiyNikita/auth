@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,27 +26,42 @@ class JWTTokensSettings(BaseSettings):
     jwt_hashing: str
 
 
-class AppSettings(BaseSettings):
+class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
     db_url: str
-    salt: str
-    hashing_type: str
-    iterations: int
+    test_db_url: str
+
+
+class AWSSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+    aws_ses_access_key_id: str
+    aws_ses_secret_access_key: str
+    aws_ses_endpoint_url: str
     services: str
     backend_url: str
     email_host_user: str
     region: str
-    aws_ses_access_key_id: str
-    aws_ses_secret_access_key: str
-    aws_ses_endpoint_url: str
+
+
+class AppSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+
+    salt: str
+    hashing_type: str
+    iterations: int
     token_secret_key: str
-    test_db_url: str
 
     redis_config: RedisSettings = RedisSettings()
     jwt_config: JWTTokensSettings = JWTTokensSettings()
+    db_settings: DatabaseSettings = DatabaseSettings()
+    aws_settings: AWSSettings = AWSSettings()
 
 
 settings = AppSettings()

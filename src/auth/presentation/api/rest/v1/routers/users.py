@@ -47,18 +47,3 @@ async def login(
         "access_token": tokens.access_token,
         "refresh_token": tokens.refresh_token,
     }
-
-
-@router.post("/refresh")  # type: ignore[misc]
-@inject  # type: ignore[misc]
-async def refresh(
-    token: str = Body(..., embed=True, alias="refreshToken"),
-    use_case: RefreshJWTTokensUseCase = Depends(
-        Provide[Container.refresh_jwt_tokens_use_case]
-    ),
-):
-    tokens = await use_case(token)
-    return {
-        "access_token": tokens.access_token,
-        "refresh_token": tokens.refresh_token,
-    }

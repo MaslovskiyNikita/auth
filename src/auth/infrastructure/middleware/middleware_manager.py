@@ -5,8 +5,10 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from jwt import InvalidTokenError
 
-from src.auth.application.exeptions.exeptions import InvalidTokenError as InvalidToken
-from src.auth.application.exeptions.exeptions import UserNotLogged
+from src.auth.application.exeptions.user_exeptions import (
+    InvalidTokenError as InvalidToken,
+)
+from src.auth.application.exeptions.user_exeptions import UserNotLogged
 
 
 class MiddlewareManager:

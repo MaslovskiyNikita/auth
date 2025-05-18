@@ -1,7 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
-from src.auth.application.exeptions.exeptions import (
+from src.auth.application.exeptions.permission_exeptions import PermissionNotExistsErorr
+from src.auth.application.exeptions.role_exeptions import (
+    RoleAlreadyExistsErorr,
+    RoleNotExistsError,
+)
+from src.auth.application.exeptions.user_exeptions import (
     InvalidPasswordError,
     InvalidTokenError,
     UserAlreadyExistsError,
@@ -55,4 +60,26 @@ def init_exeptions_handlers(app: FastAPI):
     ) -> JSONResponse:
         return ExceptionResponseService.JSONResponse(
             status_code=401, exc=exc, error_code="Invalid password"
+        )
+
+    @app.exception_handler(RoleAlreadyExistsErorr)  # type: ignore[misc]
+    async def handle_existing_role_error(
+        request, exc: RoleAlreadyExistsErorr
+    ) -> JSONResponse:
+        return ExceptionResponseService.JSONResponse(
+            status_code=409, exc=exc, error_code="Role alredy exists"
+        )
+
+    @app.exception_handler(PermissionNotExistsErorr)  # type: ignore[misc]
+    async def handle_not_existing_permission(
+        request, exc: PermissionNotExistsErorr
+    ) -> JSONResponse:
+        return ExceptionResponseService.JSONResponse(
+            status_code=404, exc=exc, error_code="Permission not exists"
+        )
+
+    @app.exception_handler(RoleNotExistsError)  # type: ignore[misc]
+    async def handle_not_existing_role(requst, exc: RoleNotExistsError) -> JSONResponse:
+        return ExceptionResponseService.JSONResponse(
+            status_code=404, exc=exc, error_code="Role not exists"
         )

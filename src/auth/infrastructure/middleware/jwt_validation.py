@@ -1,11 +1,11 @@
 import jwt
 from fastapi import Request
-from fastapi.responses import JSONResponse
-from jwt import InvalidTokenError
 
-from src.auth.application.exeptions.exeptions import InvalidTokenError as InvalidToken
-from src.auth.application.exeptions.exeptions import UserNotLogged
-from src.auth.infrastructure.dto.user import UserDataDTO
+from src.auth.application.dto.user import UserDataDTO
+from src.auth.application.exeptions.user_exeptions import (
+    InvalidTokenError as InvalidToken,
+)
+from src.auth.application.exeptions.user_exeptions import UserNotLogged
 from src.auth.infrastructure.middleware.middleware_manager import middleware_manager
 from src.auth.main.settings.settings import settings
 

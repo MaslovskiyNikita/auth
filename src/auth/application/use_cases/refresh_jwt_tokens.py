@@ -1,6 +1,6 @@
 from src.auth.application.dto.token_pair import TokenPair
-from src.auth.application.exeptions.exeptions import InvalidTokenError
-from src.auth.application.repositories.redis.redis import CashServiceABC
+from src.auth.application.exeptions.user_exeptions import InvalidTokenError
+from src.auth.application.repositories.redis.cesh_service import CeshServiceABC
 from src.auth.application.repositories.verificatation.verification_token import (
     TokenServiceABC,
 )
@@ -8,7 +8,7 @@ from src.auth.main.settings.settings import settings
 
 
 class RefreshJWTTokensUseCase:
-    def __init__(self, token_service: TokenServiceABC, redis: CashServiceABC):
+    def __init__(self, token_service: TokenServiceABC, redis: CeshServiceABC):
         self._token_service = token_service
         self._redis_service = redis
 

@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from src.auth.application.dto.token_pair import TokenPair
-from src.auth.application.exeptions.exeptions import (
+from src.auth.application.exeptions.user_exeptions import (
     InvalidPasswordError,
     UserNotActiveError,
     UserNotFoundError,
@@ -44,7 +44,6 @@ class LoginUserUseCase:
             if not existing_user:
                 raise UserNotFoundError(email)
 
-            # Проверка на то, активировал ли пользователь свою почту или нет
             if not existing_user.is_active:
                 raise UserNotActiveError()
 

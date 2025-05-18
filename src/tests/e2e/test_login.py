@@ -2,7 +2,7 @@ import pytest
 from fastapi import status
 from httpx import AsyncClient
 
-from src.auth.application.exeptions.exeptions import (
+from src.auth.application.exeptions.user_exeptions import (
     InvalidPasswordError,
     UserNotActiveError,
     UserNotFoundError,

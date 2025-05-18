@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class CashServiceABC(ABC):
+class CeshServiceABC(ABC):
     @abstractmethod
     async def add(self, jwt: str, expire: int) -> None:
         pass

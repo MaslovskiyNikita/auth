@@ -12,7 +12,7 @@ from src.auth.main.dependencies.container import container
 from src.auth.main.main import app
 from src.auth.main.settings.settings import settings
 
-TEST_DATABASE_URL = settings.test_db_url
+TEST_DATABASE_URL = settings.db_settings.test_db_url
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -50,7 +50,7 @@ async def session(session_factory):
 
 
 @pytest.fixture
-async def uow(session):
+async def uow(session: AsyncSession):
     return UnitOfWork(session_factory=lambda: session)
 
 

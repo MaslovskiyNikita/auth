@@ -2,7 +2,7 @@
 import datetime
 import uuid
 
-from src.auth.application.exeptions.exeptions import UserAlreadyExistsError
+from src.auth.application.exeptions.user_exeptions import UserAlreadyExistsError
 from src.auth.application.repositories.hashing.hashing import PasswordHasherABC
 from src.auth.application.repositories.uow.uow import UnitOfWorkABC
 from src.auth.application.repositories.user_repo.user_repository import (
