@@ -50,7 +50,7 @@ async def read_roles(
     use_case: ReadRolesUseCase = Depends(Provide[Container.read_roles_use_case]),
 ) -> List[RoleSchema]:
     result = await use_case()
-    roles = RoleConverter.orm_roles_to_roles_schemas(result)  # type: ignore[misc]
+    roles = RoleConverter.orm_roles_to_roles_schemas(result)  # type: ignore[misc, arg-type]
     return roles
 
 
