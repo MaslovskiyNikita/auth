@@ -21,7 +21,7 @@ from src.auth.infrastructure.repositories.token_use_case import ItsDangerousToke
 from src.auth.infrastructure.repositories.user_repository_impl import (
     SQLAlchemyUserRepository,
 )
-from src.auth.main.settings.settings import settings
+from src.auth.main.settings.settings import AppSettings
 
 
 class Container(containers.DeclarativeContainer):
@@ -38,8 +38,10 @@ class Container(containers.DeclarativeContainer):
 
     base_settings = providers.Singleton()
 
+    settings = providers.Singleton(AppSettings)
+
     engine = providers.Singleton(
-        create_async_engine, settings.db_settings.db_url, echo=True
+        create_async_engine, settings.provided.db_settings.db_url, echo=True
     )
 
     session_factory = providers.Factory(
@@ -60,22 +62,20 @@ class Container(containers.DeclarativeContainer):
 
     session_aioboto3 = providers.Singleton(
         aioboto3.Session,
-        aws_access_key_id=settings.aws_settings.aws_ses_access_key_id,
-        aws_secret_access_key=settings.aws_settings.aws_ses_secret_access_key,
-        region_name=settings.aws_settings.region,
+        aws_access_key_id=settings.provided.aws_settings.aws_ses_access_key_id,
+        aws_secret_access_key=settings.provided.aws_settings.aws_ses_secret_access_key,
+        region_name=settings.provided.aws_settings.region,
     )
 
     email_service = providers.Factory(
         SESEmailService,
         session=session_aioboto3,
-        endpoint_url=settings.aws_settings.aws_ses_endpoint_url,
-        source_email=settings.aws_settings.email_host_user,
+        settings=settings,
     )
 
     token_service = providers.Factory(
         ItsDangerousTokenService,
-        secret_key=settings.token_secret_key,
-        salt=settings.salt,
+        settings=settings,
         max_age=3600,
     )
 

@@ -8,14 +8,15 @@ from src.auth.application.repositories.verificatation.verification_token import 
     TokenServiceABC,
 )
 from src.auth.infrastructure.db.models.user import UserDB
-from src.auth.main.settings.settings import settings
+from src.auth.main.settings.settings import AppSettings
 
 
 class ItsDangerousTokenService(TokenServiceABC):
-    def __init__(self, secret_key: str, salt: str, max_age: int = 3600):
-        self.serializer = URLSafeTimedSerializer(secret_key)
-        self.salt = salt
+    def __init__(self, settings: AppSettings, max_age: int = 3600):
+        self.serializer = URLSafeTimedSerializer(settings.token_secret_key)
+        self.salt = settings.salt
         self.max_age = max_age
+        self.settings = settings
 
     def generate_token(self, data: str) -> str:
         return self.serializer.dumps(data, salt=self.salt)
@@ -29,14 +30,14 @@ class ItsDangerousTokenService(TokenServiceABC):
         data.update({"exp": expire})
         return jwt.encode(
             data,
-            settings.token_secret_key,
-            algorithm=settings.jwt_config.jwt_hashing,
+            self.settings.token_secret_key,
+            algorithm=self.settings.jwt_config.jwt_hashing,
         )
 
     def decode_jwt_token(self, token: str) -> dict:  # type: ignore[override]
         return jwt.decode(
             token,
-            settings.token_secret_key,
-            algorithm=settings.jwt_config.jwt_hashing,
+            self.settings.token_secret_key,
+            algorithm=self.settings.jwt_config.jwt_hashing,
             options={"verify_exp": True},
         )
