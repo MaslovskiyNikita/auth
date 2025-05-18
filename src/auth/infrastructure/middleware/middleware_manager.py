@@ -1,14 +1,6 @@
 from typing import Any, Awaitable, Callable
 
-import jwt
 from fastapi import Request
-from fastapi.responses import JSONResponse
-from jwt import InvalidTokenError
-
-from src.auth.application.exeptions.user_exeptions import (
-    InvalidTokenError as InvalidToken,
-)
-from src.auth.application.exeptions.user_exeptions import UserNotLogged
 
 
 class MiddlewareManager:
