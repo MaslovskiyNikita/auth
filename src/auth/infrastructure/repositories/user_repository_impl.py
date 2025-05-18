@@ -1,3 +1,4 @@
+from sqlalchemy import delete as destroy
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -34,3 +35,8 @@ class SQLAlchemyUserRepository(UserRepositoryABC):
 
     async def add(self, user: User) -> None:
         return self.session.add(user)
+
+    async def delete(self, username: str):
+        query = destroy(UserDB).where(UserDB.username == username)
+        result = self.session.execute(query)
+        await self.session.flush()

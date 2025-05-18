@@ -1,6 +1,7 @@
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, status
 
+from src.auth.application.use_cases.delete_user import DeleteUserUseCase
 from src.auth.application.use_cases.login_use_case import LoginUserUseCase
 from src.auth.application.use_cases.refresh_jwt_tokens import RefreshJWTTokensUseCase
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
@@ -32,7 +33,7 @@ async def confirm_email(
     ),
 ):
     await use_case.execute(token=token)
-    return {"message": "Email successfully confirmed"}
+    return status.HTTP_200_OK
 
 
 @router.post("/login")  # type: ignore[misc]
@@ -47,3 +48,13 @@ async def login(
         "access_token": tokens.access_token,
         "refresh_token": tokens.refresh_token,
     }
+
+
+@router.delete("/delete_me")
+@inject
+async def delete(
+    token: str,
+    use_case: DeleteUserUseCase = Depends(Provide[Container.destroy_user_use_case]),
+):
+    await use_case(token)
+    return status.HTTP_200_OK

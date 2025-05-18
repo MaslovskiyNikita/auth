@@ -12,6 +12,7 @@ from src.auth.application.exeptions.user_exeptions import (
     UserAlreadyExistsError,
     UserNotActiveError,
     UserNotFoundError,
+    UserNotLogged,
 )
 
 
@@ -52,6 +53,12 @@ def init_exeptions_handlers(app: FastAPI):
     async def handle_not_activ_user(request, exc: UserNotActiveError) -> JSONResponse:
         return ExceptionResponseService.JSONResponse(
             status_code=400, exc=exc, error_code="not verifyed email"
+        )
+
+    @app.exception_handler(UserNotLogged)  # type: ignore[misc]
+    async def handle_not_logged_user(request, exc: UserNotLogged) -> JSONResponse:
+        return ExceptionResponseService.JSONResponse(
+            status_code=400, exc=exc, error_code="you are not logged"
         )
 
     @app.exception_handler(InvalidPasswordError)  # type: ignore[misc]

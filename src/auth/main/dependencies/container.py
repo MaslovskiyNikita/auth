@@ -2,6 +2,7 @@ import aioboto3
 from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from src.auth.application.use_cases.delete_user import DeleteUserUseCase
 from src.auth.application.use_cases.login_use_case import LoginUserUseCase
 from src.auth.application.use_cases.refresh_jwt_tokens import RefreshJWTTokensUseCase
 from src.auth.application.use_cases.roles.create_role import CreateRoleUseCase
@@ -99,6 +100,10 @@ class Container(containers.DeclarativeContainer):
 
     login_user_use_case = providers.Factory(
         LoginUserUseCase, uow=uow, token_service=token_service, hashing=password_hasher
+    )
+
+    destroy_user_use_case = providers.Factory(
+        DeleteUserUseCase, uow=uow, token_service=token_service
     )
 
     roles_service = providers.Factory(SQLAlchemyRoleRepository, session=session_factory)
