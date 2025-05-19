@@ -5,7 +5,7 @@ from src.auth.infrastructure.db.models.user import UserDB
 from src.auth.infrastructure.hashing.hashing import HashlibPasswordHasher
 
 
-class UserFactory(AsyncSQLAlchemyFactory):
+class BaseUserFactory(AsyncSQLAlchemyFactory):
     class Meta:
         model = UserDB
         sqlalchemy_session = None
@@ -17,7 +17,6 @@ class UserFactory(AsyncSQLAlchemyFactory):
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     password = factory.Faker("password")
-    is_active = False
 
     @classmethod
     async def create_async(cls, session, **kwargs):
@@ -29,3 +28,11 @@ class UserFactory(AsyncSQLAlchemyFactory):
         await session.commit()
         await session.refresh(user)
         return user
+
+
+class UserFactory(BaseUserFactory):
+    is_active = False
+
+
+class ActiveUserFactory(BaseUserFactory):
+    is_active = True

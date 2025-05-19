@@ -1,7 +1,7 @@
 from typing import List
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, status
 
 from src.auth.application.use_cases.login_use_case import LoginUserUseCase
 from src.auth.application.use_cases.refresh_jwt_tokens import RefreshJWTTokensUseCase
@@ -19,7 +19,10 @@ from src.auth.presentation.api.rest.v1.schemas.user import (
     UserCreateSchema,
     UserResponseSchema,
 )
-from src.auth.presentation.api.rest.v1.schemas.user_role import RoleSchema
+from src.auth.presentation.api.rest.v1.schemas.user_role import (
+    RoleSchema,
+    UpdateRoleSchema,
+)
 
 router = APIRouter(prefix="/roles", tags=["Roles"])
 
@@ -34,7 +37,7 @@ async def create_role(
     return role_schema
 
 
-@router.delete("/delete")  # type: ignore[misc]
+@router.delete("/{role_name}")  # type: ignore[misc]
 @inject  # type: ignore[misc]
 async def delete_role(
     role_name: str,
@@ -57,9 +60,8 @@ async def read_roles(
 @router.patch("/update")  # type: ignore[misc]
 @inject  # type: ignore[misc]
 async def update_role(
-    role_name: str,
-    update_data: dict,
+    request: UpdateRoleSchema = Body(...),
     use_case: UpdateRoleUseCase = Depends(Provide[Container.update_role_use_case]),
 ) -> dict:
-    await use_case(role_name, **update_data)
-    return {"message": f"succesfully updated {role_name}"}
+    await use_case(request.name, **request.update_data)
+    return {"message": "Role updated successfully"}

@@ -7,4 +7,9 @@ from src.auth.presentation.api.rest.v1.schemas.permissions import PermissionsSch
 
 class RoleSchema(BaseModel):
     name: str
-    permissions_id: List[UUID4]
+    permissions_name: List[str]
+
+
+class UpdateRoleSchema(BaseModel):
+    name: str
+    update_data: dict

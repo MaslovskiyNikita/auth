@@ -21,7 +21,7 @@ class CreateRoleUseCase:
         async with self._uow as uow:
             exists_role = await uow.role_repository.exists(role)
 
-            for permission in role.permissions_id:
+            for permission in role.permissions_name:
                 exists_permission = await uow.role_repository.exists_permission(
                     permission
                 )

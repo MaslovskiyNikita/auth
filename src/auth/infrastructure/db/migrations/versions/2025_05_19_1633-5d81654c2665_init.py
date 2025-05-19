@@ -1,8 +1,8 @@
 """init
 
-Revision ID: e2740dad4a75
+Revision ID: 5d81654c2665
 Revises: 
-Create Date: 2025-05-17 19:21:07.522111
+Create Date: 2025-05-19 16:33:38.624941
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "e2740dad4a75"
+revision: str = "5d81654c2665"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -70,12 +70,12 @@ def upgrade() -> None:
     op.create_table(
         "role_permissions",
         sa.Column("role_id", sa.UUID(), nullable=False),
-        sa.Column("permission_id", sa.UUID(), nullable=False),
+        sa.Column("permission_name", sa.String(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["permission_id"], ["permissions.id"], ondelete="CASCADE"
+            ["permission_name"], ["permissions.name"], ondelete="CASCADE"
         ),
         sa.ForeignKeyConstraint(["role_id"], ["roles.id"], ondelete="CASCADE"),
-        sa.PrimaryKeyConstraint("role_id", "permission_id"),
+        sa.PrimaryKeyConstraint("role_id", "permission_name"),
     )
     op.create_table(
         "user_roles",

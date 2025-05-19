@@ -47,6 +47,3 @@ class RoleDB(Base):
         back_populates="roles",
         lazy="selectin",
     )
-
-    def __repr__(self):
-        return f"<RoleDB(id={self.id}, name={self.name})>"

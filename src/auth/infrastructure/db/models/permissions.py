@@ -32,8 +32,7 @@ class RolePermissionsAssociation(Base):
         ForeignKey("roles.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    permission_id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True),
-        ForeignKey("permissions.id", ondelete="CASCADE"),
+    permission_name: Mapped[str] = mapped_column(
+        ForeignKey("permissions.name", ondelete="CASCADE"),
         primary_key=True,
     )

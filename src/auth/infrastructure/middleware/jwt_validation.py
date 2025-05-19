@@ -45,6 +45,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
                     algorithms=[settings.jwt_config.jwt_hashing],
                     options={"verify_exp": True},
                 )
+
                 request.state.user = UserDataDTO(**payload)
             except jwt.InvalidTokenError:
                 raise InvalidTokenError

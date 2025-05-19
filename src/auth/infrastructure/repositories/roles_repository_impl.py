@@ -25,20 +25,20 @@ class SQLAlchemyRoleRepository(RolesRepositoryABC):
         result = await self.session.execute(query)
         return result.scalar_one_or_none() is not None
 
-    async def exists_permission(self, permission_id: UUID) -> bool:
-        query = select(PermissionsDB).where(PermissionsDB.id == permission_id)
+    async def exists_permission(self, permission_name: UUID) -> bool:
+        query = select(PermissionsDB).where(PermissionsDB.name == permission_name)
         result = await self.session.execute(query)
         return result.scalar_one_or_none() is not None
 
-    async def save(self, role: Role) -> RoleDB:
+    async def save(self, role: RoleDB) -> RoleDB:
         orm_role = RoleDB(name=role.name)
 
         self.session.add(orm_role)
         await self.session.flush()
 
-        for permission_id in role.permissions_id:
+        for permission in role.permissions_name:
             association = RolePermissionsAssociation(
-                role_id=orm_role.id, permission_id=permission_id
+                role_id=orm_role.id, permission_name=permission
             )
             self.session.add(association)
 
