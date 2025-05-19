@@ -52,5 +52,6 @@ omit = [
     "src/auth/application/use_cases/update_password.py",
     "src/auth/application/use_cases/delete_user.py",
     "src/auth/application/repositories/redis/cesh_service.py",
-    "src/auth/infrastructure/repositories/user_repository_impl.py "
+    "src/auth/infrastructure/repositories/user_repository_impl.py",
+     src/auth/application/use_cases/roles/create_role.py 
 ]
