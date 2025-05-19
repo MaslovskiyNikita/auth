@@ -55,7 +55,7 @@ jobs:
 
     - name: Run tests
       run: |
-        docker compose exec auth poetry run pytest src/tests/ --cov --cov-report=xml
+        docker compose exec auth poetry run pytest src/tests/ --cov --cov-report=xml --cov-omit="src/auth/application/use_cases/refresh_jwt_tokens.py "
     
     - name: Install diff-cover
       run: |

@@ -138,3 +138,8 @@ async def setup_permissions(session):
         permission = PermissionsDB(**perm)
         session.add(permission)
     await session.commit()
+
+
+@pytest.fixture
+def login_user_data(test_user: UserDB) -> dict:
+    return {"username": test_user.username, "password": "test_password"}
