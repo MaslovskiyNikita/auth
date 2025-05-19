@@ -22,3 +22,6 @@ class UserRepositoryABC(ABC):
 
     @abstractmethod
     async def delete(self, username: str) -> None: ...
+
+    @abstractmethod
+    async def update(self, email: str, **kwargs) -> None: ...

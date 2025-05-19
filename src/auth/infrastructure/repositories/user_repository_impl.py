@@ -1,5 +1,5 @@
 from sqlalchemy import delete as destroy
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.auth.application.repositories.user_repo.user_repository import (
@@ -38,5 +38,9 @@ class SQLAlchemyUserRepository(UserRepositoryABC):
 
     async def delete(self, username: str):
         query = destroy(UserDB).where(UserDB.username == username)
-        result = self.session.execute(query)
+        result = await self.session.execute(query)
         await self.session.flush()
+
+    async def update(self, email, **kwargs):
+        query = update(UserDB).where(UserDB.email == email).values(**kwargs)
+        await self.session.execute(query)

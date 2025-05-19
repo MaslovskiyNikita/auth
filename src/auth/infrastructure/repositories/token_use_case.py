@@ -18,7 +18,7 @@ class ItsDangerousTokenService(TokenServiceABC):
         self.max_age = max_age
         self.settings = settings
 
-    def generate_token(self, data: str) -> str:
+    def generate_token(self, data) -> str:
         return self.serializer.dumps(data, salt=self.salt)
 
     def validate_token(self, token: str) -> str:

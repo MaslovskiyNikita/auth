@@ -9,6 +9,10 @@ from src.auth.application.use_cases.roles.create_role import CreateRoleUseCase
 from src.auth.application.use_cases.roles.delete_role import DeleteRoleUseCase
 from src.auth.application.use_cases.roles.read_roles import ReadRolesUseCase
 from src.auth.application.use_cases.roles.update_role import UpdateRoleUseCase
+from src.auth.application.use_cases.update_password import (
+    DropUserPasswordUseCase,
+    NewUserPasswordUseCase,
+)
 from src.auth.application.use_cases.user_use_case import CreateUserUseCase
 from src.auth.application.use_cases.validate_token import ValidateTokenUseCase
 from src.auth.infrastructure.aws.ses_manager import SESEmailService
@@ -104,6 +108,18 @@ class Container(containers.DeclarativeContainer):
 
     destroy_user_use_case = providers.Factory(
         DeleteUserUseCase, uow=uow, token_service=token_service
+    )
+
+    drop_user_password_use_case = providers.Factory(
+        DropUserPasswordUseCase,
+        uow=uow,
+        hashing=password_hasher,
+        email_service=email_service,
+        token_service=token_service,
+    )
+
+    new_user_password_use_case = providers.Factory(
+        NewUserPasswordUseCase, uow=uow, token_service=token_service
     )
 
     roles_service = providers.Factory(SQLAlchemyRoleRepository, session=session_factory)

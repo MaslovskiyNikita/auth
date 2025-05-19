@@ -19,6 +19,8 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         "/docs",
         "/openapi.json",
         "/users/confirm-email",
+        "/drop_my_password",
+        "/confirm_drop_my_password",
     }
 
     async def dispatch(self, request: Request, call_next):

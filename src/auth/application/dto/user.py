@@ -8,3 +8,9 @@ class UserDataDTO:
     first_name: str
     last_name: str
     roles: list[str]
+
+
+@dataclass
+class AuthorizationDataDTO:
+    email: str
+    password: str
