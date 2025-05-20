@@ -9,6 +9,7 @@ class UserDataDTO:
     first_name: str
     last_name: str
     roles: list[str]
+    is_active: bool
     exp: int
 
 

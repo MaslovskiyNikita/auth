@@ -1,3 +1,5 @@
+import datetime
+
 from src.auth.application.dto.token_pair import TokenPair
 from src.auth.application.exeptions.user_exeptions import InvalidTokenError
 from src.auth.application.repositories.redis.cesh_service import CeshServiceABC
@@ -19,8 +21,8 @@ class RefreshJWTTokensUseCase:
 
         try:
             payload = self._token_service.decode_jwt_token(refresh_token)
-        except:
-            raise InvalidTokenError
+        except Exception as e:
+            raise InvalidTokenError from e
 
         new_access_token = self._token_service.create_jwt_token(
             data=payload, expires=settings.jwt_config.access_token_expire
@@ -30,7 +32,7 @@ class RefreshJWTTokensUseCase:
         )
 
         await self._redis_service.add(
-            jwt=refresh_token, expire=int(payload["exp"])  # type: ignore[index]
+            jwt=refresh_token, expire=(payload["exp"] - datetime.datetime.now()).seconds  # type: ignore[index, operator]
         )
 
         return TokenPair(access_token=new_access_token, refresh_token=new_refresh_token)

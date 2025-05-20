@@ -46,9 +46,9 @@ build-backend = "poetry.core.masonry.api"
 asyncio_mode = "auto"
 addopts = "--asyncio-mode=auto"
 
+
 [tool.coverage.run]
 omit = [
-    "src/auth/application/use_cases/refresh_jwt_tokens.py",
     "src/auth/application/use_cases/update_password.py",
     "src/auth/application/use_cases/delete_user.py",
     "src/auth/application/repositories/redis/cesh_service.py",

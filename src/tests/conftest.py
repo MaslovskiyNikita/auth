@@ -10,6 +10,7 @@ from src.auth.infrastructure.db.models.base import Base
 from src.auth.infrastructure.db.models.permissions import PermissionsDB
 from src.auth.infrastructure.db.models.user import UserDB
 from src.auth.infrastructure.db.uow.uow import UnitOfWork
+from src.auth.infrastructure.hashing.hashing import HashlibPasswordHasher
 from src.auth.infrastructure.repositories.token_use_case import ItsDangerousTokenService
 from src.auth.main.dependencies.container import container
 from src.auth.main.main import app
@@ -92,10 +93,8 @@ async def test_user(session: AsyncSession):
         "password": "strongpassword123",
         "is_active": True,
     }
-
     user = await ActiveUserFactory.create_async(session=session, **user_data)
     yield user
-    await session.delete(user)
     await session.commit()
 
 
@@ -108,6 +107,7 @@ def auth_token(test_user: UserDB, token_service: ItsDangerousTokenService):
         "first_name": test_user.first_name,
         "last_name": test_user.last_name,
         "roles": test_user.roles,
+        "is_active": test_user.is_active,
         "exp": int,
     }
     return token_service.create_jwt_token(

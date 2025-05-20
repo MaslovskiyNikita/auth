@@ -38,6 +38,6 @@ class ItsDangerousTokenService(TokenServiceABC):
         return jwt.decode(
             token,
             self.settings.token_secret_key,
-            algorithm=self.settings.jwt_config.jwt_hashing,
+            algorithms=[self.settings.jwt_config.jwt_hashing],
             options={"verify_exp": True},
         )

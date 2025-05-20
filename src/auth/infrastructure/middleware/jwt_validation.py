@@ -21,6 +21,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         "/users/confirm-email",
         "/drop_my_password",
         "/confirm_drop_my_password",
+        "/tokens/refresh",
     }
 
     async def dispatch(self, request: Request, call_next):

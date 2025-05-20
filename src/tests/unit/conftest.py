@@ -20,8 +20,6 @@ def mock_uow(fake_user):
     uow = AsyncMock()
     uow.__aenter__.return_value = uow
     uow.__aexit__ = AsyncMock()
-
-    # Настраиваем репозиторий
     uow.user_repository = AsyncMock()
     uow.user_repository.get_by_email = AsyncMock(return_value=fake_user)
 
