@@ -31,3 +31,49 @@ jobs:
         uses: sasanquaneuf/mypy-github-action@releases/v1
         with:
           checkName: 'mypy'
+       
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+
+    - name: Create .env file      
+      run: |
+          echo "${{ secrets.env }}" >> .env
+
+    - name: Docker_start
+      run: |
+        docker compose up -d
+
+    - name: Run tests
+      run: |
+        docker compose exec auth poetry run pytest src/tests/ --cov --cov-report=xml 
+    
+    - name: Install diff-cover
+      run: |
+          pip install diff-cover    
+  
+    - name: Run diff-cover
+      run: |
+
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              BASE_BRANCH="origin/${{ github.base_ref}}"
+            else
+              BASE_BRANCH="origin/main"
+            fi
+
+            if ! git rev-parse --verify $BASE_BRANCH >/dev/null 2>&1; then
+              echo "Base branch $BASE_BRANCH not found. Falling back to main"
+              BASE_BRANCH="origin/main"
+            fi
+      
+            echo "Comparing against base branch: $BASE_BRANCH"
+            diff-cover coverage.xml --compare-branch=$BASE_BRANCH

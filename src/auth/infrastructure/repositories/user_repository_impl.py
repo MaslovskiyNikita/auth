@@ -1,12 +1,15 @@
-from sqlalchemy import select
+from sqlalchemy import delete as destroy
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from src.auth.application.repositories.user_repository import UserRepositoryABC
+from src.auth.application.repositories.user_repo.user_repository import (
+    UserRepositoryABC,
+)
 from src.auth.domain.entity.user import User
 from src.auth.infrastructure.db.models.user import UserDB
 
 
-class UserRepository(UserRepositoryABC):
+class SQLAlchemyUserRepository(UserRepositoryABC):
 
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -21,3 +24,23 @@ class UserRepository(UserRepositoryABC):
         self.session.add(orm_user)
         await self.session.flush()
         return orm_user
+
+    async def get_by_email(self, email: str) -> UserDB | None:
+        query = select(UserDB).where(UserDB.email == email)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
+
+    async def get_by_email_password(self, email: str):
+        return SQLAlchemyUserRepository.get_by_email(email=email).password  # type: ignore[call-arg]
+
+    async def add(self, user: User) -> None:
+        return self.session.add(user)
+
+    async def delete(self, username: str):
+        query = destroy(UserDB).where(UserDB.username == username)
+        result = await self.session.execute(query)
+        await self.session.flush()
+
+    async def update(self, email, **kwargs):
+        query = update(UserDB).where(UserDB.email == email).values(**kwargs)
+        await self.session.execute(query)

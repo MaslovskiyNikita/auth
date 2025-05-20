@@ -17,9 +17,30 @@ services:
   db:
     image: postgres:16
     env_file:
-      - .env  
+      - .env
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=mydatabase,test_db
+    volumes:
+      - ./postgres-init.sh:/docker-entrypoint-initdb.d/init.sh 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"]
-      interval: 5s
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d mydatabase"]
+
+
+  redis:
+    image: redis:7.0
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+
+
+  localstack:
+    image: localstack/localstack
+    entrypoint: /app/entrypoint_localstack.sh
+    env_file:
+      - .env
+    volumes:
+      - ./src/auth/infrastructure/aws/ses_templates:/app/ses_templates 
+      - ./entrypoint_localstack.sh:/app/entrypoint_localstack.sh 
+    environment:  
+      - TEMPLATES_DIR=/app/ses_templates    
